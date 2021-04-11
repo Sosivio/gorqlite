@@ -20,7 +20,6 @@ package gorqlite
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strings"
 )
@@ -196,7 +195,6 @@ func (conn *Connection) updateClusterInfo() error {
 	if !ok {
 		apiPeers = map[string]interface{}{}
 	}
-
 	if apiAddrMap, ok := apiPeers[leaderRaftAddr]; ok {
 		if _httpAddr, ok := apiAddrMap.(map[string]interface{}); ok {
 			if peerHttp, ok := _httpAddr["api_addr"]; ok {
@@ -207,7 +205,8 @@ func (conn *Connection) updateClusterInfo() error {
 	}
 
 	if rc.leader.hostname == "" {
-		return errors.New("could not determine leader from API status call")
+		return fmt.Errorf("could not determine leader from API status call: \n ------------ %v ------------\n ----------- %v ------------\n ------------ %v ------------", rc, apiPeers, sMap)
+		// return errors.New("could not determine leader from API status call")
 	}
 
 	// dump to trace
